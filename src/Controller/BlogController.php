@@ -2,35 +2,57 @@
 namespace App\Controller;
 
 use App\Entity\Blogs;
+use App\Form\Type\BlogType;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class BlogController extends AbstractController
 {
-
     /**
-     * @Route("/blogs", name="blog_home")
+     * @Route("/", name="blog_home")
      */
-    public function blog()
+    public function blog(): Response
     {
-        $blogs = ['blog 1', 'blog 2'];
+        $blogs = $this->getDoctrine()->getRepository(Blogs::class)->findAll();
         return $this->render("blog/index.html.twig", ['blogs' => $blogs]);
     }
 
     /**
-     * @Route("/blogs/save", name="blog_save")
+     * @Route("/blogs/delete/{id}", name="blog_delete", methods={"DELETE"})
      */
-    public function save()
+    public function delete(Request $request, $id)
     {
-        $entityManager = $this->getDoctrine()->getManager();
-        $blog = new Blogs();
-        $blog->setTitle("blog 1");
-        $blog->setBody("Body for blog 1");
+        $blogs = $this->getDoctrine()->getRepository(Blogs::class)->find($id);
+        if ($blogs) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($blogs);
+            $entityManager->flush();
+        }
 
-        $entityManager->persist($blog);
-        $entityManager->flush();
+        return new Response(null, 204); // 204 No Content
+    }
 
-        return new Response('blog saved with ID of ' . $blog->getId());
+    /**
+     * @Route("/new", name="blog_save", methods={"GET", "POST"})
+     */
+    public function new(Request $request): Response
+    {
+        $NewBlog = new Blogs();
+        $form = $this->createForm(BlogType::class, $NewBlog);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($NewBlog);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('blog_home');
+        }
+
+        return $this->render('blog/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 }

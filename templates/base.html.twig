@@ -17,14 +17,14 @@
     <body>
     <!--NAVBAR-->
     {{include ('inc/navbar.html.twig')}}
-
+<div class="contatiner">
       <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
     <!-- Bootstrap 3.4.1 JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js"></script>
-       <div class="contatiner"> {% block body %}{% endblock %}
+       {% block body %}{% endblock %}
     </div>
     </body>
 </html>

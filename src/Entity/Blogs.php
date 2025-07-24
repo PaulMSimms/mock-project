@@ -24,6 +24,11 @@ class Blogs
      * @ORM\Column(type="text")
      */
     private $body;
+    /**
+     * @ORM\Column(type="text")
+     * 
+     */
+    private $author;
     public function getId(): ?int
     {
         return $this->id;
@@ -45,5 +50,14 @@ class Blogs
     public function getBody(): ?string
     {
         return $this->body;
+    }
+    public function setAuthor(string $author): Blogs
+    {
+        $this->author = $author;
+        return $this;
+    }
+    public function getAuthor(): ?string
+    {
+        return $this->author;
     }
 }

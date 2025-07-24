@@ -6,25 +6,29 @@ Home
 
 {%block body%}
     {%if blogs%}
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Blog Title</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
+
         {%for blog in blogs%}
-            <tr>
-                <td>{{blog}}</td>
-                <td>
-                <a href="/blogs/1" class="btn btn-dark">Show</a>
-                </td>
-            </tr>
+            <div id="blog-entry" class="container  text-capitalize">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title"><em class="">{{blog.title}}</em></h3>
+                </div>
+                <div class="panel-body">
+                  {{blog.body}}
+                </div>
+                <div class="panel-footer clearfix">
+                    <span style="display: inline-block; vertical-align: middle;">Author:
+                        {{ blog.author }}</span>
+            <a href="#" class="btn btn-danger delete-blog pull-right" data-id="{{ blog.id }}" style="vertical-align: middle;">Delete</a>
+                </div>
+            </div>
+        </div>
         {%endfor%}
-        </tbody>
-    </table>
     {%else%}
-    <p>No Articles to display</p>
+    <p>No Blogs to display</p>
     {%endif%}
+ {%endblock%}
+
+ {%block javascripts%}
+ <script src="/js/main.js"></script>
  {%endblock%}
