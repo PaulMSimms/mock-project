@@ -1,42 +1,135 @@
-{%extends 'base.html.twig'%}
+{% extends 'base.html.twig' %}
 
-{%block title%}
-New Blog
-{% endblock%}
+{% block title %}
+	New Blog
+{% endblock %}
 
-{%block body%}
+{% block stylesheets %}
+	<style>
+		.page-header {
+			border-bottom: 2px solid #eee;
+			margin-bottom: 30px;
+		}
 
-{{ form_start(form) }}
-<div class="container pb-5">
-	<div class="row mb-3">
-		<div class="col">
-			<i>{{ form_label(form.title) }}</i>
-			{{ form_widget(form.title) }}
+		.page-header h1 {
+			color: #337ab7;
+			margin-bottom: 5px;
+		}
+
+		.form-group label {
+			font-weight: 600;
+			color: #555;
+		}
+
+		.form-control {
+			border-radius: 4px;
+			border: 1px solid #ddd;
+			transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+		}
+
+		.form-control:focus {
+			border-color: #337ab7;
+			box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 0 3px rgba(51, 122, 183, .1);
+		}
+
+		.btn-primary {
+			background-color: #337ab7;
+			border-color: #337ab7;
+			padding: 12px 30px;
+			font-size: 16px;
+			font-weight: 600;
+		}
+
+		.btn-primary:hover {
+			background-color: #286090;
+			border-color: #204d74;
+		}
+
+		.alert {
+			border-radius: 4px;
+			margin-top: 15px;
+		}
+
+		.glyphicon {
+			margin-right: 8px;
+		}
+
+		textarea.form-control {
+			min-height: 120px;
+			resize: vertical;
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="page-header">
+			<h1>
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				Create New Blog Post
+			</h1>
+			<p class="lead text-muted">Share your thoughts with the world</p>
+		</div>
+
+		<div class="row">
+			<div class="col-md-8 col-md-offset-2">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h3 class="panel-title">
+							<span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+							Blog Post Details
+						</h3>
+					</div>
+					<div class="panel-body">
+						{{ form_start(form, {'attr': {'role': 'form'}}) }}
+
+						<div class="form-group style=" display: none;"">
+							{{ form_label(form.title, 'Blog Title', {'label_attr': {'class': 'control-label'}}) }}
+							{{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Enter an engaging title for your blog post'}}) }}
+							{{ form_errors(form.title) }}
+						</div>
+
+						<div class="form-group">
+							{{ form_label(form.body, 'Blog Content', {'label_attr': {'class': 'control-label'}}) }}
+							{{ form_widget(form.body, {'attr': {'class': 'form-control', 'rows': '8', 'placeholder': 'Write your blog content here...'}}) }}
+							{{ form_errors(form.body) }}
+						</div>
+
+						<div class="form-group">
+							{{ form_label(form.author, 'Author', {'label_attr': {'class': 'control-label'}}) }}
+							{{ form_widget(form.author, {
+								'attr': {
+									'class': 'form-control',
+									'placeholder': app.user.fullName,
+									'readonly': 'readonly'
+								}
+							}) }}
+							{{ form_errors(form.author) }}
+						</div>
+
+
+
+						<!-- Global Form Errors -->
+						{% if form_errors(form) %}
+							<div class="alert alert-danger">
+								<span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
+								<strong>Please fix the following errors:</strong>
+								{{ form_errors(form) }}
+							</div>
+						{% endif %}
+
+						<div class="form-group text-center">
+							{{ form_widget(form.save, {'attr': {'class': 'btn btn-primary btn-lg'}}) }}
+							<a href="{{ path('blog_home') }}" class="btn btn-default btn-lg">
+								<span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span>
+								Cancel
+							</a>
+						</div>
+
+						{{ form_end(form) }}
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
-	<div class="row mb-3">
-		<div class="col">
-			<i>{{ form_label(form.body) }}</i>
-			{{ form_widget(form.body) }}
-		</div>
-	</div>
-	<div class="row mb-3">
-		<div class="col">
-			<i>{{ form_label(form.author) }}</i>
-			{{ form_widget(form.author) }}
-		</div>
-	</div>
-	<div class="row mb-3">
-		<div class="col ">
-{{ form_widget(form.save, {'attr': {'style': 'margin-top: 1rem; margin-bottom: 3rem;'}}) }}
-	</div>
-</div>
-{{ form_end(form) }}
-
-
-
-
-{{ form_end(form)}}
-
-
-		{%endblock%}
+{% endblock %}

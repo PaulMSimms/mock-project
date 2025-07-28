@@ -1,0 +1,260 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+	Register
+{% endblock %}
+
+{% block stylesheets %}
+	<style>
+		.auth-container {
+			max-width: 450px;
+			margin: 30px auto;
+			padding: 0 20px;
+		}
+
+		.auth-panel {
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			border-radius: 6px;
+			overflow: hidden;
+		}
+
+		.auth-header {
+			background: linear-gradient(135deg, #5cb85c, #449d44);
+			color: white;
+			text-align: center;
+			padding: 30px 20px;
+		}
+
+		.auth-header h2 {
+			margin: 0;
+			font-weight: 300;
+		}
+
+		.auth-header .glyphicon {
+			font-size: 48px;
+			margin-bottom: 15px;
+			opacity: 0.8;
+		}
+
+		.auth-body {
+			padding: 30px;
+			background: white;
+		}
+
+		.form-group {
+			margin-bottom: 20px;
+		}
+
+		.form-control {
+			height: 45px;
+			border-radius: 4px;
+			border: 1px solid #ddd;
+			font-size: 14px;
+			transition: all 0.3s ease;
+		}
+
+		.form-control:focus {
+			border-color: #5cb85c;
+			box-shadow: 0 0 0 3px rgba(92, 184, 92, 0.1);
+		}
+
+		.btn-register {
+			width: 100%;
+			height: 45px;
+			background: linear-gradient(135deg, #337ab7, #286090);
+			border: none;
+			border-radius: 4px;
+			color: white;
+			font-size: 16px;
+			font-weight: 600;
+			transition: all 0.3s ease;
+		}
+
+		.btn-register:hover {
+			background: linear-gradient(135deg, #286090, #204d74);
+			transform: translateY(-1px);
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+
+		.alert {
+			border-radius: 4px;
+			margin-bottom: 20px;
+		}
+
+		.auth-footer {
+			text-align: center;
+			padding: 20px;
+			background: #f8f9fa;
+			border-top: 1px solid #dee2e6;
+		}
+
+		.auth-footer a {
+			color: #337ab7;
+			text-decoration: none;
+			font-weight: 500;
+		}
+
+		.auth-footer a:hover {
+			text-decoration: underline;
+		}
+
+		.input-group {
+			position: relative;
+		}
+
+		.input-group .glyphicon {
+			position: absolute;
+			left: 15px;
+			top: 50%;
+			transform: translateY(-50%);
+			color: #999;
+			z-index: 3;
+		}
+
+		.input-group .form-control {
+			padding-left: 45px;
+		}
+
+		.form-row {
+			display: flex;
+			gap: 15px;
+		}
+
+		.form-row .form-group {
+			flex: 1;
+		}
+
+		.password-requirements {
+			background: #f8f9fa;
+			border: 1px solid #e9ecef;
+			border-radius: 4px;
+			padding: 15px;
+			margin: 15px 0;
+			font-size: 13px;
+		}
+
+		.password-requirements h6 {
+			margin: 0 0 10px;
+			color: #495057;
+			font-weight: 600;
+		}
+
+		.password-requirements ul {
+			margin: 0;
+			padding-left: 20px;
+			color: #6c757d;
+		}
+
+		.password-requirements li {
+			margin-bottom: 5px;
+		}
+
+		.invalid-feedback {
+			display: block;
+			color: #dc3545;
+			font-size: 13px;
+			margin-top: 5px;
+		}
+
+		.form-control.is-invalid {
+			border-color: #dc3545;
+		}
+
+		.form-control.is-invalid:focus {
+			border-color: #dc3545;
+			box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.1);
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="auth-container">
+			<div class="auth-panel">
+				<div class="auth-header">
+					<span class="glyphicon glyphicon-user-plus"></span>
+					<h2>Create Account</h2>
+					<p>Join our community today</p>
+				</div>
+
+				<div class="auth-body">
+					{{ form_start(registrationForm) }}
+
+					<div class="form-row">
+						<div class="form-group">
+							{{ form_label(registrationForm.firstName, 'First Name', {'label_attr': {'class': 'control-label'}}) }}
+							<div class="input-group">
+								<span class="glyphicon glyphicon-user"></span>
+								{{ form_widget(registrationForm.firstName, {'attr': {'class': form_errors(registrationForm.firstName) ? 'form-control is-invalid' : 'form-control'}}) }}
+							</div>
+							{{ form_errors(registrationForm.firstName) }}
+						</div>
+
+						<div class="form-group">
+							{{ form_label(registrationForm.lastName, 'Last Name', {'label_attr': {'class': 'control-label'}}) }}
+							<div class="input-group">
+								<span class="glyphicon glyphicon-user"></span>
+								{{ form_widget(registrationForm.lastName, {'attr': {'class': form_errors(registrationForm.lastName) ? 'form-control is-invalid' : 'form-control'}}) }}
+							</div>
+							{{ form_errors(registrationForm.lastName) }}
+						</div>
+					</div>
+
+					<div class="form-group">
+						{{ form_label(registrationForm.email, 'Email Address', {'label_attr': {'class': 'control-label'}}) }}
+						<div class="input-group">
+							<span class="glyphicon glyphicon-envelope"></span>
+							{{ form_widget(registrationForm.email, {'attr': {'class': form_errors(registrationForm.email) ? 'form-control is-invalid' : 'form-control'}}) }}
+						</div>
+						{{ form_errors(registrationForm.email) }}
+					</div>
+
+					<div class="form-group">
+						{{ form_label(registrationForm.plainPassword.first, 'Password', {'label_attr': {'class': 'control-label'}}) }}
+						<div class="input-group">
+							<span class="glyphicon glyphicon-lock"></span>
+							{{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': form_errors(registrationForm.plainPassword.first) ? 'form-control is-invalid' : 'form-control'}}) }}
+						</div>
+						{{ form_errors(registrationForm.plainPassword.first) }}
+					</div>
+
+					<div class="form-group">
+						{{ form_label(registrationForm.plainPassword.second, 'Confirm Password', {'label_attr': {'class': 'control-label'}}) }}
+						<div class="input-group">
+							<span class="glyphicon glyphicon-lock"></span>
+							{{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': form_errors(registrationForm.plainPassword.second) ? 'form-control is-invalid' : 'form-control'}}) }}
+						</div>
+						{{ form_errors(registrationForm.plainPassword.second) }}
+					</div>
+
+					<div class="password-requirements">
+						<h6>
+							<span class="glyphicon glyphicon-info-sign"></span>
+							Password Requirements:</h6>
+						<ul>
+							<li>At least 6 characters long</li>
+							<li>Mix of letters and numbers recommended</li>
+							<li>Avoid common passwords</li>
+						</ul>
+					</div>
+
+					<button class="btn-register" type="submit">
+						<span class="glyphicon glyphicon-plus-sign"></span>
+						Create Account
+					</button>
+
+					{{ form_end(registrationForm) }}
+				</div>
+
+				<div class="auth-footer">
+					<p>Already have an account?
+						<a href="{{ path('app_login') }}">
+							<span class="glyphicon glyphicon-log-in"></span>
+							Sign in here
+						</a>
+					</p>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

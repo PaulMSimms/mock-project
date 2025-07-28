@@ -1,18 +1,17 @@
 <?php
-// src/Entity/Blog.php (note: singular name)
+// src/Entity/Comment.php (note: singular name is better practice)
 
 namespace App\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use DateTimeInterface;
 
 /**
- * @ORM\Entity(repositoryClass="App\Repository\BlogsRepository")
- * @ORM\Table(name="blogs")
+ * @ORM\Entity(repositoryClass="App\Repository\CommentRepository")
+ * @ORM\HasLifecycleCallbacks
+ * @ORM\Table(name="comments")
  */
-class Blogs
+class Comment
 {
     /**
      * @ORM\Id
@@ -22,14 +21,9 @@ class Blogs
     private $id;
 
     /** 
-     * @ORM\Column(type="string", length=255) 
-     */
-    private $title;
-
-    /** 
      * @ORM\Column(type="text") 
      */
-    private $body;
+    private $content;
 
     /** 
      * @ORM\Column(type="string", length=100) 
@@ -37,10 +31,10 @@ class Blogs
     private $author;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Comment", mappedBy="blog", cascade={"remove"})
-     * @ORM\OrderBy({"createdAt" = "ASC"})
+     * @ORM\ManyToOne(targetEntity="App\Entity\Blogs", inversedBy="comments")
+     * @ORM\JoinColumn(nullable=false, onDelete="CASCADE")
      */
-    private $comments;
+    private $blog;
 
     /**
      * @ORM\Column(type="datetime",  nullable=true)
@@ -54,7 +48,6 @@ class Blogs
 
     public function __construct()
     {
-        $this->comments = new ArrayCollection();
         $this->createdAt = new \DateTime();
     }
 
@@ -81,25 +74,14 @@ class Blogs
         return $this->id;
     }
 
-    public function getTitle(): ?string
+    public function getContent(): ?string
     {
-        return $this->title;
+        return $this->content;
     }
 
-    public function setTitle(string $title): self
+    public function setContent(string $content): self
     {
-        $this->title = $title;
-        return $this;
-    }
-
-    public function getBody(): ?string
-    {
-        return $this->body;
-    }
-
-    public function setBody(string $body): self
-    {
-        $this->body = $body;
+        $this->content = $content;
         return $this;
     }
 
@@ -114,33 +96,14 @@ class Blogs
         return $this;
     }
 
-    /**
-     * @return Collection|Comment[]
-     */
-    public function getComments(): Collection
+    public function getBlog(): ?Blogs
     {
-        return $this->comments;
+        return $this->blog;
     }
 
-    public function addComment(Comment $comment): self
+    public function setBlog(?Blogs $blog): self
     {
-        if (!$this->comments->contains($comment)) {
-            $this->comments[] = $comment;
-            $comment->setBlog($this);
-        }
-
-        return $this;
-    }
-
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // set the owning side to null (unless already changed)
-            if ($comment->getBlog() === $this) {
-                $comment->setBlog(null);
-            }
-        }
-
+        $this->blog = $blog;
         return $this;
     }
 
@@ -171,23 +134,29 @@ class Blogs
      */
     public function getFormattedCreatedAt(): string
     {
-        return $this->createdAt ? $this->createdAt->format('F j, Y') : '';
+        return $this->createdAt ? $this->createdAt->format('M j, Y \a\t g:i A') : '';
     }
 
     /**
-     * Get excerpt of body content
+     * Get time ago format
      */
-    public function getExcerpt(int $length = 150): string
+    public function getTimeAgo(): string
     {
-        $body = strip_tags($this->body);
-        return strlen($body) > $length ? substr($body, 0, $length) . '...' : $body;
-    }
+        if (!$this->createdAt) {
+            return 'Unknown';
+        }
 
-    /**
-     * Get comment count
-     */
-    public function getCommentCount(): int
-    {
-        return $this->comments->count();
+        $now = new \DateTime();
+        $diff = $now->diff($this->createdAt);
+
+        if ($diff->days > 0) {
+            return $diff->days . ' day' . ($diff->days > 1 ? 's' : '') . ' ago';
+        } elseif ($diff->h > 0) {
+            return $diff->h . ' hour' . ($diff->h > 1 ? 's' : '') . ' ago';
+        } elseif ($diff->i > 0) {
+            return $diff->i . ' minute' . ($diff->i > 1 ? 's' : '') . ' ago';
+        } else {
+            return 'Just now';
+        }
     }
 }

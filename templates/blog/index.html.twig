@@ -1,34 +1,249 @@
-{%extends 'base.html.twig'%}
+{% extends 'base.html.twig' %}
 
-{%block title%}
-Home
-{% endblock%}
+{% block title %}
+	Home
+{% endblock %}
 
-{%block body%}
-    {%if blogs%}
+{% block stylesheets %}
+	<style>
+		.page-header {
+			border-bottom: 2px solid #eee;
+			margin-bottom: 30px;
+		}
 
-        {%for blog in blogs%}
-            <div id="blog-entry" class="container  text-capitalize">
-            <div class="panel panel-info">
-                <div class="panel-heading">
-                    <h3 class="panel-title"><em class="">{{blog.title}}</em></h3>
-                </div>
-                <div class="panel-body">
-                  {{blog.body}}
-                </div>
-                <div class="panel-footer clearfix">
-                    <span style="display: inline-block; vertical-align: middle;">Author:
-                        {{ blog.author }}</span>
-            <a href="#" class="btn btn-danger delete-blog pull-right" data-id="{{ blog.id }}" style="vertical-align: middle;">Delete</a>
-                </div>
-            </div>
-        </div>
-        {%endfor%}
-    {%else%}
-    <p>No Blogs to display</p>
-    {%endif%}
- {%endblock%}
+		.page-header h1 {
+			color: #337ab7;
+			margin-bottom: 5px;
+		}
 
- {%block javascripts%}
- <script src="/js/main.js"></script>
- {%endblock%}
+		.blog-entry {
+			margin-bottom: 25px;
+		}
+
+		.panel-title {
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		.panel-body {
+			font-size: 14px;
+			line-height: 1.6;
+			max-height: 150px;
+			overflow: hidden;
+			position: relative;
+		}
+
+		.panel-body::after {
+			content: "";
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 20px;
+			background: linear-gradient(transparent, white);
+		}
+
+		.panel-footer {
+			background-color: #f5f5f5;
+			border-top: 1px solid #ddd;
+			padding: 10px 15px;
+		}
+
+		.author-info {
+			display: inline-block;
+			vertical-align: middle;
+			color: #666;
+			font-size: 13px;
+		}
+
+		.btn-group-actions {
+			float: right;
+		}
+
+		.btn-group-actions .btn {
+			margin-left: 5px;
+		}
+
+		.btn-view {
+			background-color: #337ab7;
+			border-color: #337ab7;
+		}
+
+		.btn-view:hover {
+			background-color: #286090;
+			border-color: #204d74;
+		}
+
+		.btn-delete {
+			background-color: #d9534f;
+			border-color: #d43f3a;
+		}
+
+		.btn-delete:hover {
+			background-color: #c9302c;
+			border-color: #ac2925;
+		}
+
+		.no-blogs {
+			text-align: center;
+			padding: 60px 20px;
+			background-color: #f9f9f9;
+			border: 1px dashed #ddd;
+			border-radius: 4px;
+			margin: 40px 0;
+		}
+
+		.no-blogs h3 {
+			color: #999;
+			margin-bottom: 10px;
+		}
+
+		.no-blogs p {
+			color: #666;
+			margin-bottom: 20px;
+		}
+
+		.glyphicon {
+			margin-right: 5px;
+		}
+
+		.create-blog-btn {
+			position: fixed;
+			bottom: 30px;
+			right: 30px;
+			z-index: 1000;
+			border-radius: 50px;
+			padding: 15px 20px;
+			font-size: 16px;
+			box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+		}
+
+		@media(max-width: 768px) {
+			.btn-group-actions {
+				float: none;
+				display: block;
+				margin-top: 10px;
+			}
+
+			.author-info {
+				display: block;
+				margin-bottom: 10px;
+			}
+		}
+	</style>
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="page-header">
+			<h1>
+				<span class="glyphicon glyphicon-home" aria-hidden="true"></span>
+				Blog Posts
+			</h1>
+			<p class="lead text-muted">Discover and explore our latest blog posts</p>
+		</div>
+
+		{% if blogs %}
+			<div class="row">
+				<div class="col-md-12">
+					{% for blog in blogs %}
+						<div class="blog-entry">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">
+										<span class="glyphicon glyphicon-file-text" aria-hidden="true"></span>
+										{{ blog.title }}
+									</h3>
+								</div>
+								<div class="panel-body">
+									{{ blog.body|striptags|slice(0, 200) }}
+									{% if blog.body|length > 200 %}...
+									{% endif %}
+								</div>
+								<div class="panel-footer clearfix">
+									<div class="author-info">
+										<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+										<strong>{{ blog.author }}</strong>
+									</div>
+
+									<div class="btn-group-actions">
+										<a href="{{ path('blog_show', { id: blog.id }) }}" class="btn btn-primary btn-sm btn-view">
+											<span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>
+											View
+										</a>
+									<form action="{{ path('blog_delete', { id: blog.id }) }}" method="post" style="display: inline;">
+										<input type="hidden" name="_token" value="{{ csrf_token('form' ~ blog.id) }}">
+										<button type="submit" class="btn btn-danger pull-right" style="vertical-align: middle;" onclick="return confirm('Are you sure?')">
+											Delete
+										</button>
+									</form>
+
+									</div>
+								</div>
+							</div>
+						</div>
+					{% endfor %}
+				</div>
+			</div>
+		{% else %}
+			<div class="no-blogs">
+				<div class="text-center">
+					<span class="glyphicon glyphicon-file" style="font-size: 48px; color: #ccc; margin-bottom: 20px; display: block;"></span>
+					<h3>No Blog Posts Yet</h3>
+					<p>Be the first to create a blog post and share your thoughts with the world!</p>
+					<a href="{{ path('blog_save') }}" class="btn btn-primary btn-lg">
+						<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+						Create Your First Blog Post
+					</a>
+				</div>
+			</div>
+		{% endif %}
+
+
+						{% for label, messages in app.flashes %}
+							{% for message in messages %}
+								<div class="alert alert-{{ label == 'error' ? 'danger' : label }} flash-message">
+									{{ message }}
+								</div>
+							{% endfor %}
+						{% endfor %}
+
+
+
+
+
+		<!-- Floating Create Button -->
+		{% if blogs %}
+			<a href="{{ path('blog_save') }}" class="btn btn-success create-blog-btn" title="Create New Blog Post">
+				<span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
+				New Post
+			</a>
+		{% endif %}
+	</div>
+{% endblock %}
+
+{% block javascripts %}
+	<script>
+	setTimeout(function () {
+		const flashMessages = document.querySelectorAll('.flash-message');
+				flashMessages.forEach(el => {
+					el.style.transition = 'opacity 0.5s ease';
+					el.style.opacity = 0;
+					setTimeout(() => el.remove(), 500);
+					});
+		}, 5000); // 5 seconds
+				// Enhanced delete confirmation
+		document.addEventListener('DOMContentLoaded', function () {
+				const deleteButtons = document.querySelectorAll('.btn-delete');
+				deleteButtons.forEach(button => {
+					button.addEventListener('click', function (e) {
+						const confirmation = confirm('Are you sure you want to delete this blog post?\n\nThis action cannot be undone and will permanently remove the blog post and all its comments.');
+						if (! confirmation) {
+							e.preventDefault();
+							return false;
+							}
+						});
+				});
+		});
+	</script>
+{% endblock %}

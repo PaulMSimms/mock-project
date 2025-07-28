@@ -12,11 +12,37 @@
 
         {% block javascripts %}
             {#{{ encore_entry_script_tags('app') }}#}
+           <script> setTimeout(function () {
+		const flashMessages = document.querySelectorAll('.flash-message');
+				flashMessages.forEach(el => {
+					el.style.transition = 'opacity 0.5s ease';
+					el.style.opacity = 0;
+					setTimeout(() => el.remove(), 500);
+					});
+		}, 3000); // 5 seconds
+        </script>
         {% endblock %}
     </head>
     <body>
     <!--NAVBAR-->
-    {{include ('inc/navbar.html.twig')}}
+        {% set excludedRoutes = ['app_login', 'app_register'] %}
+        {% set currentRoute = app.request.attributes.get('_route') %}
+            {% if currentRoute not in excludedRoutes %}
+                {{ include('inc/navbar.html.twig') }}
+            {% endif %}
+        {% for label, messages in app.flashes %}
+            {% for message in messages %}
+                <div class="alert alert-{{ label == 'error' ? 'danger' : label }} flash-message">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endfor %}
+
+
+
+
+
+
 <div class="contatiner">
       <!-- Bootstrap -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css">
